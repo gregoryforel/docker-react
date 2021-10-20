@@ -1,0 +1,17 @@
+language: generic 
+sudo: required
+services:
+  # Tells Travis we need docker
+  - docker
+
+# Series of commands / setup executed before our tests are ran
+before_install:
+  # Note that we are tagging the image below `-t <DOCKER_USER/GIT_REPO_NAME>`
+  # We could use any tag name though, as the tag will only be used inside this travis process.
+  - docker build -t gregoryforel/docker-react -f Dockerfile.dev .
+
+script:
+  # We override environment variables with -e CI=TRUE
+  # CI=TRUE forces Jest to run in CI-mode, and tests will only run once instead of launching the watcher.
+  # Otherwise, Travis would hang forever hoping for Node to exit the tests before continuing the process.
+  - docker run -e CI=true gregoryforel/docker-react npm run test
