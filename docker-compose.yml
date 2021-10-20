@@ -1,0 +1,38 @@
+version: '3'
+# services is kind of like a container.
+services:
+    web:
+        # If you are using any version of Windows and your React app is not
+        # automatically reloading after a code change,
+        # you can add this environment variable to your compose file
+        # environment:
+        #     - CHOKIDAR_USEPOLLING=true
+
+        # Solves a bug introduced y Create React App
+        stdin_open: true
+        build:
+            # Context is the current directory (same root as this file)
+            context: .
+            dockerfile: Dockerfile.dev
+        ports:
+            - '3000:3000'
+        volumes:
+            # This says: do not try to map a folder up against app's node_modules inside a container.
+            - /app/node_modules
+            # This says: current directory (.), mapped to the app folder inside the container.
+            - .:/app
+    # IMPORTANT
+    # This solution is not ideal. The reason is that it launches immediately the tests, but we don't have
+    # interactive access to the testing console (press w q ... to re-start tests, etc.)
+    # The other solution is to comment this out.
+    # Launch docker-compose up, then docker ps, take note of the id and start the test with docker exec -it <CONTAINER_ID> npm run test
+    tests:
+        stdin_open: true
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - /app/node_modules
+            - .:/app
+        #  overrides the start command (because here, we want npm run test instead of npm run start)
+        command: ['npm', 'run', 'test']

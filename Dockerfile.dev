@@ -1,0 +1,14 @@
+FROM node:alpine
+
+WORKDIR '/app'
+
+COPY package.json .
+RUN npm install
+
+# Important
+# In our docker-compose file, we use volumes to map our files into our container. So we could get away with
+# getting rid of our COPY statement below. However, if we decide to not use docker-compose in the future
+# we would need to COPY the file as below. So let's keep this statement.
+COPY . .
+
+CMD ["npm", "run", "start"]
