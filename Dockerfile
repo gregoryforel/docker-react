@@ -13,6 +13,8 @@ RUN npm run build
 
 # BUILD PHASE
 FROM nginx
+# We need to expose the port in LIVE environment (to the exterior)
+EXPOSE 80
 # This copies from the previous BUILD PHASE's build folder and dumps everything else.
 COPY --from=builder /app/build /usr/share/nginx/html
 # There is no cmd to run nginx needed. Running the container will run nginx
